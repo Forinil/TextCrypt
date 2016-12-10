@@ -26,24 +26,40 @@ fun main(args: Array<String>) {
     val mode = properties.getProperty("mode", "")
     val padding = properties.getProperty("padding", "")
     val encryptionKey = properties.getProperty("encryptionKey", "")
-    val text = properties.getProperty("text", "")
+    var text = properties.getProperty("text", "")
 
     val secretKeyFactory = SecretKeyFactory.getInstance(algorithm)
     val keySpec = DESKeySpec(encryptionKey.toByteArray())
     val cipher = Cipher.getInstance("$algorithm/$mode/$padding")
     val secretKey = secretKeyFactory.generateSecret(keySpec)
 
+    if (properties.keys.contains("input_file")) {
+        val inputFile = File(properties.getProperty("input_file"))
+        text = inputFile.readText()
+    }
+
     if (properties.keys.contains("encrypt")) {
         println("Text to encrypt: $text")
         val encryptedString = encrypt(cipher, secretKey, text)
         println("Encrypted string: $encryptedString")
+        if (properties.keys.contains("output_file")) {
+            writeToFile(properties.getProperty("output_file"), text)
+        }
     }
 
     if (properties.keys.contains("decrypt")) {
         println("Text to decrypt: $text")
         val decryptedText = decrypt(cipher, text, secretKey)
         println("Decrypted string: $decryptedText")
+        if (properties.keys.contains("output_file")) {
+            writeToFile(properties.getProperty("output_file"), text)
+        }
     }
+}
+
+fun  writeToFile(fileName: String, text: String) {
+    val out = File(fileName)
+    out.writeText(text)
 }
 
 fun processOptions(args: Array<String>): Properties {
