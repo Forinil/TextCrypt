@@ -26,22 +26,24 @@ fun main(args: Array<String>) {
     val mode = properties.getProperty("mode", "")
     val padding = properties.getProperty("padding", "")
     val encryptionKey = properties.getProperty("encryptionKey", "")
-    val unencryptedText = properties.getProperty("unencryptedText", "")
+    val text = properties.getProperty("text", "")
 
     val secretKeyFactory = SecretKeyFactory.getInstance(algorithm)
     val keySpec = DESKeySpec(encryptionKey.toByteArray())
     val cipher = Cipher.getInstance("$algorithm/$mode/$padding")
     val secretKey = secretKeyFactory.generateSecret(keySpec)
 
-    println("Text to encrypt: $unencryptedText")
+    if (properties.keys.contains("encrypt")) {
+        println("Text to encrypt: $text")
+        val encryptedString = encrypt(cipher, secretKey, text)
+        println("Encrypted string: $encryptedString")
+    }
 
-    val encryptedString = encrypt(cipher, secretKey, unencryptedText)
-
-    println("Encrypted string: $encryptedString")
-
-    val decryptedText: String = decrypt(cipher, encryptedString, secretKey)
-
-    println("Decrypted string: $decryptedText")
+    if (properties.keys.contains("decrypt")) {
+        println("Text to decrypt: $text")
+        val decryptedText = decrypt(cipher, text, secretKey)
+        println("Decrypted string: $decryptedText")
+    }
 }
 
 fun processOptions(args: Array<String>): Properties {
