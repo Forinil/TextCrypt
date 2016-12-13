@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
         val encryptedString = encrypt(cipher, secretKey, text)
         println("Encrypted string: $encryptedString")
         if (properties.keys.contains("output_file")) {
-            writeToFile(properties.getProperty("output_file"), text)
+            writeToFile(properties.getProperty("output_file"), encryptedString)
         }
     }
 
@@ -52,7 +52,7 @@ fun main(args: Array<String>) {
         val decryptedText = decrypt(cipher, text, secretKey)
         println("Decrypted string: $decryptedText")
         if (properties.keys.contains("output_file")) {
-            writeToFile(properties.getProperty("output_file"), text)
+            writeToFile(properties.getProperty("output_file"), decryptedText)
         }
     }
 }
@@ -113,7 +113,7 @@ fun processOptions(args: Array<String>): Properties {
     }
 
     if (commandLine.hasOption("o")) {
-        properties.setProperty("output_file", commandLine.getOptionValue("f"))
+        properties.setProperty("output_file", commandLine.getOptionValue("o"))
     }
 
     if (commandLine.hasOption("e")) {
